@@ -1,33 +1,40 @@
-/* Add styles here */
+.month {
+    fill: none;
+    stroke: #000;
+    stroke-width: 2px;
+}
+.day {
+    fill: #fff;
+    stroke: #ccc;
+}
+text    {
+    font-family:sans-serif;
+    font-size:1.5em;
+}
+.dayLabel   {
+    fill:#aaa;
+    font-size:0.8em;
+}
+.monthLabel {
+    text-anchor:middle;
+    font-size:0.8em;
+    fill:#aaa;
+}
+.yearLabel  {
+    fill:#aaa;
+    font-size:1.2em;
+}
 
-body {
-  margin: 0 auto;
-  width: 100%;
-  text-align: center;
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-weight: normal;
-  color: #333;
-  font-size: 20px;
-}
-path {
-  /*shape-rendering: crispEdges;*/
-  /*transition: fill .25s ease;*/
-  stroke-width: 0.5;
-  stroke: black;
+.key    {font-size:0.5em;}
+
+.bar {
+  fill: steelblue;
 }
 
-.nodata {
-  fill: #ccc;
+.bar:hover {
+  fill: brown;
 }
-.ok {
-  fill: rgb(22,167,34);
-}
-.slowing {
-  fill: rgb(253,158,59);
-}
-.slow {
-  fill: rgb(251,0,7);
-}
-.stopped {
-  fill: rgb(174,0,4);
+
+.axis--x path {
+  display: none;
 }
