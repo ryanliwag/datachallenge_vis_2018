@@ -1,224 +1,147 @@
-//http://bl.ocks.org/eesur/5fbda7f410d31da35e42
+function drawCalendar(dateData){
+
+  var weeksInMonth = function(month){
+    var m = d3.timeMonth.floor(month)
+    return d3.timeWeeks(d3.timeWeek.floor(m), d3.timeMonth.offset(m,1)).length;
+  }
+
+  var minDate = d3.min(dateData, function(d) { return new Date(d.date) })
+  var maxDate = d3.max(dateData, function(d) { return new Date(d.date) })
+
+  var cellMargin = 5,
+      cellSize = 20;
+
+  var width = 1100;
+  var height = 90;
+  var xOffset=20;
+  var calX=25;
+  var calY=50;//offset of calendar in each group
+
+  //bars variables
+  var y = d3.scaleLinear().rangeRound([0, 500]);
+  y.domain([0, d3.max(dateData, function(d) { return parseInt(d.na_entry) })]);
 
 
-var title="Total Daily Traffic of the MRT";
-var units=" People";
-var breaks= [10,25,50,100];
-var colours=["#ffffd4","#fed98e","#fe9929","#d95f0e","#993404"];
 
-//general layout information
-var cellSize = 17;
-var xOffset=20;
-var yOffset=60;
-var calY=50;//offset of calendar in each group
-var calX=25;
-var width = 960;
-var height = 163;
-var parseDate = d3.time.format("%d/%m/%y").parse;
-format = d3.time.format("%d-%m-%Y");
-toolDate = d3.time.format("%d/%b/%y");
+  var svg = d3.select("body").append("svg")
+      .attr("width","90%")
+      .attr("viewBox","0 0 "+(xOffset+width)+" 300")
 
-d3.csv("data/final.csv", function(error, data) {
+  function drawbar(dataas){
 
-    //set up an array of all the dates in the data which we need to work out the range of the data
-    var dates = new Array();
-    var values = new Array();
-    var mrt_stats = new Array();
-
-    //parse the data
-    data.forEach(function(d)    {
-            dates.push(parseDate(d.date));
-            values.push(d.value);
-            mrt_stats.push(d.north_ave_entry)
-            d.date=parseDate(d.date);
-            d.value=d.value;
-            d.mrt_stats=d.mrt_stats
-            d.year=d.date.getFullYear();//extract the year from the data
-    });
-
-    var yearlyData = d3.nest()
-        .key(function(d){return d.year;})
-        .entries(data);
-
-    var svg = d3.select("body").append("svg")
-        .attr("width","90%")
-        .attr("viewBox","0 0 "+(xOffset+width)+" 540")
-
-    //title
-    svg.append("text")
-    .attr("x",xOffset)
-    .attr("y",20)
-    .text(title);
-
-    //create an SVG group for each year
-    var cals = svg.selectAll("g")
-        .data(yearlyData)
-        .enter()
-        .append("g")
-        .attr("id",function(d){
-            return d.key;
+    svg.selectAll(".bar")
+      .data(dateData)
+      .enter().append("rect")
+        .attr("class", "bar")
+        .transition()
+        .duration(200)
+        .delay(function (d, i) {
+        return i * 50;
         })
-        .attr("transform",function(d,i){
-            return "translate(0,"+(yOffset+(i*(height+calY)))+")";
-        })
+        .attr("y", 240)
+        .attr("x", 200)
+        .attr("height", 30)
+        .attr("width", y(dataas))
+  }
 
-    var labels = cals.append("text")
-        .attr("class","yearLabel")
-        .attr("x",xOffset)
-        .attr("y",15)
-        .text(function(d){return d.key});
 
-    //create a daily rectangle for each year
-    var rects = cals.append("g")
-        .attr("id","alldays")
-        .selectAll(".day")
-        .data(function(d) { return d3.time.days(new Date(parseInt(d.key), 0, 1), new Date(parseInt(d.key) + 1, 0, 1)); })
-        .enter().append("rect")
-        .attr("id",function(d) {
-            return "_"+format(d);
-            //return toolDate(d.date)+":\n"+d.value+" dead or missing";
-        })
-        .attr("class", "day")
-        .attr("width", cellSize)
-        .attr("height", cellSize)
-        .attr("x", function(d) {
-            return xOffset+calX+(d3.time.weekOfYear(d) * cellSize);
-        })
-        .attr("y", function(d) { return calY+(d.getDay() * cellSize); })
-        .datum(format);
 
-    //create day labels
-    var days = ['Su','Mo','Tu','We','Th','Fr','Sa'];
-    var dayLabels=cals.append("g").attr("id","dayLabels")
-    days.forEach(function(d,i)    {
-        dayLabels.append("text")
-        .attr("class","dayLabel")
-        .attr("x",xOffset)
-        .attr("y",function(d) { return calY+(i * cellSize); })
-        .attr("dy","0.9em")
-        .text(d);
-    })
 
-    //let's draw the data on
-    var dataRects = cals.append("g")
-        .attr("id","dataDays")
-        .selectAll(".dataday")
-        .data(function(d){
-            return d.values;
-        })
-        .enter()
-        .append("rect")
-        .attr("id",function(d) {
-            return format(d.date)+":"+d.value;
-        })
-        .attr("stroke","#ccc")
-        .attr("width",cellSize)
-        .attr("height",cellSize)
-        .attr("x", function(d){return xOffset+calX+(d3.time.weekOfYear(d.date) * cellSize);})
-        .attr("y", function(d) { return calY+(d.date.getDay() * cellSize); })
-        .attr("fill", function(d) {
-            if (d.value<breaks[0]) {
-                return colours[0];
-            }
-            for (i=0;i<breaks.length+1;i++){
-                if (d.value>=breaks[i]&&d.value<breaks[i+1]){
-                    return colours[i];
-                }
-            }
-            if (d.value>breaks.length-1){
-                return colours[breaks.length]
-            }
-        })
+  var day = d3.timeFormat("%w"),
+      week = d3.timeFormat("%U"),
+      month = d3.timeFormat("%m")
+      format = d3.timeFormat("%Y-%m-%d"),
+      titleFormat = d3.utcFormat("%a, %d-%b");
+      monthName = d3.timeFormat("%B"),
+      months= d3.timeMonth.range(d3.timeMonth.floor(minDate), maxDate);
 
-    //append a title element to give basic mouseover info
-    dataRects.append("title")
-        .text(function(d) { return toolDate(d.date)+":\n"+d.value+units; });
-
-    //add montly outlines for calendar
-    cals.append("g")
-    .attr("id","monthOutlines")
-    .selectAll(".month")
-    .data(function(d) {
-        return d3.time.months(new Date(parseInt(d.key), 0, 1),
-                              new Date(parseInt(d.key) + 1, 0, 1));
-    })
-    .enter().append("path")
+  var svg_months = svg.selectAll("g")
+    .data(months)
+    .enter().append("g")
     .attr("class", "month")
-    .attr("transform","translate("+(xOffset+calX)+","+calY+")")
-    .attr("d", monthPath);
-
-    //retreive the bounding boxes of the outlines
-    var BB = new Array();
-    var mp = document.getElementById("monthOutlines").childNodes;
-    for (var i=0;i<mp.length;i++){
-        BB.push(mp[i].getBBox());
-    }
-
-    var monthX = new Array();
-    BB.forEach(function(d,i){
-        boxCentre = d.width/2;
-        monthX.push(xOffset+calX+d.x+boxCentre);
+    .attr("height", ((cellSize * 7) + (cellMargin * 8) + 20) ) // the 20 is for the month labels
+    .attr("width", function(d) {
+      var columns = weeksInMonth(d);
+      return ((cellSize * columns) + (cellMargin * (columns + 2)));
     })
+    .append("g")
 
-    //create centred month labels around the bounding box of each month path
-    //create day labels
-    var months = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
-    var monthLabels=cals.append("g").attr("id","monthLabels")
-    months.forEach(function(d,i)    {
-        monthLabels.append("text")
-        .attr("class","monthLabel")
-        .attr("x",monthX[i])
-        .attr("y",calY/1.2)
-        .text(d);
+  // draw day labels
+  var days = ['Su','Mo','Tu','We','Th','Fr','Sa'];
+  var dayLabels=svg.append("g").attr("id","dayLabels")
+  days.forEach(function(d,i)    {
+      dayLabels.append("text")
+      .attr("class","day-name")
+      .attr("x",xOffset)
+      .attr("y",function(d) { return calY+(i * cellSize * cellMargin + 30) /4; })
+      .attr("dy","0.9em")
+      .text(d);
+  })
+
+  svg_months.append("text")
+    .attr("class", "month-name")
+    .attr("y", (cellSize * 7) + (cellMargin * 8) + 15 + calY )
+    .attr("x",
+      function(d) {return (month(d) * cellSize * 4.2)}
+    )
+    .attr("text-anchor", "middle")
+    .text(function(d) { return monthName(d); })
+
+    var div = d3.select("body").append("div")
+        .attr("class", "tooltip")
+        .style("opacity", 0);
+
+  var rect = svg_months.selectAll("rect.day")
+    .data(function(d, i) { return d3.timeDays(d, new Date(d.getFullYear(), d.getMonth()+1, 1)); })
+    .enter().append("rect")
+    .attr("class", "day")
+    .attr("width", cellSize)
+    .attr("height", cellSize)
+    .attr("rx", 3).attr("ry", 3) // rounded corners
+    .attr("fill", '#eaeaea') // default light grey fill
+    .attr("y", function(d) { return (day(d) * cellSize) + (day(d) * cellMargin) + cellMargin + calY; })
+    .attr("x", function(d) {return xOffset+calX+(week(d) * cellSize) ;})
+    .on("mouseover", function(d) {
+        div.transition()
+            .duration(200)
+            .style("opacity", .9);
+        div	.html(d + "<br/>"  + lookup[d])
+            .style("left", (d3.event.pageX) + "px")
+            .style("top", (d3.event.pageY - 28) + "px");
+
+        drawbar(lookup[d]);
+        })
+    .on("mouseout", function(d) {
+        div.transition()
+            .duration(500)
+            .style("opacity", 0);
+
+        d3.selectAll(".bar").remove();
     })
+    .datum(format);
 
-     //create key
-    var key = svg.append("g")
-        .attr("id","key")
-        .attr("class","key")
-        .attr("transform",function(d){
-            return "translate("+xOffset+","+(yOffset-(cellSize*1.5))+")";
-        });
+  rect.append("title")
+    .text(function(d) { return titleFormat(new Date(d)); });
 
-    key.selectAll("rect")
-        .data(colours)
-        .enter()
-        .append("rect")
-        .attr("width",cellSize)
-        .attr("height",cellSize)
-        .attr("x",function(d,i){
-            return i*130;
-        })
-        .attr("fill",function(d){
-            return d;
-        });
+  var lookup = d3.nest()
+    .key(function(d) { return d.date; })
+    .rollup(function(leaves) {
+      return d3.sum(leaves, function(d){ return parseInt(d.na_entry); });
+    })
+    .object(dateData);
 
-    key.selectAll("text")
-        .data(colours)
-        .enter()
-        .append("text")
-        .attr("x",function(d,i){
-            return cellSize+5+(i*130);
-        })
-        .attr("y","1em")
-        .text(function(d,i){
-            if (i<colours.length-1){
-                return "up to "+breaks[i];
-            }   else    {
-                return "over "+breaks[i-1];
-            }
-        });
+  var scale = d3.scaleLinear()
+    .domain(d3.extent(dateData, function(d) { return parseInt(d.na_entry); }))
+    .range([0.2,1]); // the interpolate used for color expects a number in the range [0,1] but i don't want the lightest part of the color scheme
 
-});//end data load
+  rect.filter(function(d) { return d in lookup; })
+    .style("fill", function(d) { return d3.interpolateBlues(scale(lookup[d])); })
+    .select("title")
+    .text(function(d) { return titleFormat(new Date(d)) + ":  " + lookup[d]; });
 
-//pure Bostock - compute and return monthly path data for any year
-function monthPath(t0) {
-  var t1 = new Date(t0.getFullYear(), t0.getMonth() + 1, 0),
-      d0 = t0.getDay(), w0 = d3.time.weekOfYear(t0),
-      d1 = t1.getDay(), w1 = d3.time.weekOfYear(t1);
-  return "M" + (w0 + 1) * cellSize + "," + d0 * cellSize
-      + "H" + w0 * cellSize + "V" + 7 * cellSize
-      + "H" + w1 * cellSize + "V" + (d1 + 1) * cellSize
-      + "H" + (w1 + 1) * cellSize + "V" + 0
-      + "H" + (w0 + 1) * cellSize + "Z";
+
 }
+
+d3.csv("data/mrt_data_new.csv", function(response){
+  drawCalendar(response);
+})

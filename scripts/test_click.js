@@ -28,3 +28,21 @@ node.append("rect")
             .attr("rx", 10)
             .attr("ry", 10)
             .attr("fill", function(d) {return d.bcolor;});
+
+
+
+
+
+            var heatChart = d3.eesur.heatmap()
+                .colourRangeStart('#FDBB30')
+                .colourRangeEnd('#EE3124')
+                .height(800)
+                .startYear('2011')
+                .endYear('2016')
+                .on('_hover', function (d, i) {
+                    var f = d3.time.format('%B %d, %Y');
+                    d3.select('#info')
+                        .text(function () {
+                            return 'date: ' + f(d) + ' | value: ' + nestedData[d];
+                        });
+                });
