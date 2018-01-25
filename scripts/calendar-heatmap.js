@@ -12,39 +12,29 @@ function drawCalendar(dateData){
       cellSize = 20;
 
   var width = 1100;
+  var middle = width / 2,
+      mid_left = middle - 75,
+      mid_right = middle + 75;
+
   var height = 90;
   var xOffset=20;
   var calX=25;
   var calY=50;//offset of calendar in each group
 
+
   //bars variables
-  var y = d3.scaleLinear().rangeRound([0, 500]);
-  y.domain([0, d3.max(dateData, function(d) { return parseInt(d.na_entry) })]);
+  var x = d3.scaleBand().rangeRound([0, 400]).paddingInner(0.06),
+      y = d3.scaleLinear().rangeRound([mid_right, width-20]),
+      y2 = d3.scaleLinear().rangeRound([20, mid_left]);
 
-
+  var stations = ["North Ave", "Quezon", "GMA", "Araneta", "Santolan", "Ortigas", "Shaw Blvd", "Boni", "Guadalupe", "Buendia", "Ayala", "Magallanes", "Taft"]
+  y.domain([0, 100000]);
+  y2.domain([100000,0])
+  x.domain(stations);
 
   var svg = d3.select("body").append("svg")
-      .attr("width","90%")
+      .attr("width","80%")
       .attr("viewBox","0 0 "+(xOffset+width)+" 300")
-
-  function drawbar(dataas){
-
-    svg.selectAll(".bar")
-      .data(dateData)
-      .enter().append("rect")
-        .attr("class", "bar")
-        .transition()
-        .duration(200)
-        .delay(function (d, i) {
-        return i * 50;
-        })
-        .attr("y", 240)
-        .attr("x", 200)
-        .attr("height", 30)
-        .attr("width", y(dataas))
-  }
-
-
 
 
   var day = d3.timeFormat("%w"),
@@ -102,21 +92,19 @@ function drawCalendar(dateData){
     .attr("y", function(d) { return (day(d) * cellSize) + (day(d) * cellMargin) + cellMargin + calY; })
     .attr("x", function(d) {return xOffset+calX+(week(d) * cellSize) ;})
     .on("mouseover", function(d) {
-        div.transition()
-            .duration(200)
-            .style("opacity", .9);
-        div	.html(d + "<br/>"  + lookup[d])
-            .style("left", (d3.event.pageX) + "px")
-            .style("top", (d3.event.pageY - 28) + "px");
+        d3.selectAll(".bar").transition().duration(500).style("opacity", 0);
+        d3.selectAll(".bar2").transition().duration(500).style("opacity", 0);
+        d3.selectAll(".bar").remove();
+        d3.selectAll(".bar2").remove();
+        drawbars(d);
 
-        drawbar(lookup[d]);
         })
     .on("mouseout", function(d) {
         div.transition()
-            .duration(500)
+            .duration(200)
             .style("opacity", 0);
 
-        d3.selectAll(".bar").remove();
+
     })
     .datum(format);
 
@@ -126,18 +114,118 @@ function drawCalendar(dateData){
   var lookup = d3.nest()
     .key(function(d) { return d.date; })
     .rollup(function(leaves) {
-      return d3.sum(leaves, function(d){ return parseInt(d.na_entry); });
+      return d3.sum(leaves, function(d){ return parseInt(d.total_entry); });
     })
     .object(dateData);
 
+    var productsById = d3.nest()
+      .key(function(d) {
+        return d.date;
+      })
+      .object(dateData)
+
+
+
+
   var scale = d3.scaleLinear()
-    .domain(d3.extent(dateData, function(d) { return parseInt(d.na_entry); }))
+    .domain(d3.extent(dateData, function(d) { return parseInt(d.total_entry); }))
     .range([0.2,1]); // the interpolate used for color expects a number in the range [0,1] but i don't want the lightest part of the color scheme
 
   rect.filter(function(d) { return d in lookup; })
     .style("fill", function(d) { return d3.interpolateBlues(scale(lookup[d])); })
-    .select("title")
-    .text(function(d) { return titleFormat(new Date(d)) + ":  " + lookup[d]; });
+
+    var tables = d3.select("body").append("svg")
+        .attr("width","80%")
+        .attr("viewBox","0 0 "+(xOffset+width)+" 1000")
+
+    tables.append("g")
+      .attr("class", "axis axis--y")
+      .call(d3.axisBottom(y))
+      .attr("transform", "translate(0,400)")
+      .selectAll("text")
+        .style("text-anchor", "end")
+        .attr("dx", "-.8em")
+        .attr("dy", "-.55em")
+        .attr("transform", "rotate(-90)" )
+
+  tables.append("g")
+    .attr("class", "axis axis--y")
+    .call(d3.axisBottom(y2))
+    .attr("transform", "translate(0,400)")
+    .selectAll("text")
+      .style("text-anchor", "end")
+      .attr("dx", "-.8em")
+      .attr("dy", "-.55em")
+      .attr("transform", "rotate(-90)" )
+
+
+  tables.append("g")
+    .attr("class", "axis axis--x")
+    .call(d3.axisLeft(x))
+    .selectAll("text")
+    .attr("x", middle+10)
+      .style("text-anchor", "middle")
+      .attr("dx", "-.8em")
+
+      tables.selectAll(".bar-outline").data(stations).enter().append("rect")
+          .attr("y", function(d) {
+            return x(d) + 1; } )
+          .attr("x", mid_right)
+          .attr("fill",'#eaeaea')
+          .attr("height", 22)
+          .attr("width", (width - mid_right - 20));
+
+      tables.selectAll(".bar-outline2").data(stations).enter().append("rect")
+          .attr("y", function(d) {
+            return x(d) + 1; } )
+          .attr("x", 20)
+          .attr("fill",'#eaeaea')
+          .attr("height", 22)
+          .attr("width", (mid_left-20));
+
+
+  function drawbars(dataas){
+
+    var station_entry = ["na_entry", "qa_entry", "gk_entry", "c_entry", "s_entry", "o_entry", "sb_entry", "ba_entry", "g_entry", "b_entry", "a_entry", "m_entry", "t_entry"]
+    var station_exit = ["na_exit", "qa_exit", "gk_exit", "c_exit", "s_exit", "o_exit", "sb_exit", "ba_exit", "g_exit", "b_exit", "a_exit", "m_exit", "t_exit"]
+    console.log(station_entry[0])
+    tables.selectAll(".bar")
+      .data(stations)
+      .enter().append("rect")
+        .attr("class", "bar")
+        .transition()
+        .duration(200)
+        .style("opacity", .9)
+        .attr("y",  function(d) {
+          return x(d); })
+        .attr("x", mid_right)
+        .attr("height", 20)
+        .attr("width", function (d,i) {
+        var temp1 = productsById[dataas][0][station_entry[i]]
+        console.log(y(temp1))
+        return y(temp1)-mid_right;
+        })
+
+    tables.selectAll(".bar2")
+      .data(stations)
+      .enter().append("rect")
+        .attr("class", "bar")
+        .transition()
+        .duration(200)
+        .style("opacity", .9)
+        .attr("y",  function(d) {
+          return x(d); })
+        .attr("x", function (d,i) {
+        var temp1 = productsById[dataas][0][station_exit[i]]
+        return y2(temp1);
+        })
+        .attr("height", 20)
+        .attr("width", function (d,i) {
+        var temp1 = productsById[dataas][0][station_exit[i]]
+        return mid_left - y2(temp1);
+        })
+
+  }
 
 
 }

@@ -87,3 +87,9 @@ d3.csv("data/data.csv", function(d){
       .attr("height", x.bandwidth())
       .attr("width", function(d) { return y2(d.value); })
 });
+
+var nested_data = d3.nest()
+.key(function(d) { return d.status; })
+.key(function(d) { return d.priority; })
+.rollup(function(leaves) { return {"length": leaves.length, "total_time": d3.sum(leaves, function(d) {return parseFloat(d.time);})} })
+.entries(csv_data);
