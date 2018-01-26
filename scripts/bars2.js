@@ -29,7 +29,7 @@ d3.csv("data/data.csv", function(d){
   y.domain([0, d3.max(data, function(d) { return d.value })])
   y2.domain([d3.max(data, function(d) { return d.value }),0])
   //this maps the y axis
-  x.domain(data.map(function(d) { return d.date; }));
+
 
   g.append("g")
     .attr("class", "axis axis--x")

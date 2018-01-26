@@ -82,7 +82,8 @@ function drawCalendar(dateData){
         .style("opacity", 0);
 
   var rect = svg_months.selectAll("rect.day")
-    .data(function(d, i) { return d3.timeDays(d, new Date(d.getFullYear(), d.getMonth()+1, 1)); })
+    .data(function(d, i) {
+      return d3.timeDays(d, new Date(d.getFullYear(), d.getMonth()+1, 1)); })
     .enter().append("rect")
     .attr("class", "day")
     .attr("width", cellSize)
@@ -92,21 +93,21 @@ function drawCalendar(dateData){
     .attr("y", function(d) { return (day(d) * cellSize) + (day(d) * cellMargin) + cellMargin + calY; })
     .attr("x", function(d) {return xOffset+calX+(week(d) * cellSize) ;})
     .on("mouseover", function(d) {
-        d3.selectAll(".bar").transition().duration(500).style("opacity", 0);
-        d3.selectAll(".bar2").transition().duration(500).style("opacity", 0);
-        d3.selectAll(".bar").remove();
-        d3.selectAll(".bar2").remove();
-        drawbars(d);
 
         })
     .on("mouseout", function(d) {
-        div.transition()
-            .duration(200)
-            .style("opacity", 0);
-
 
     })
+    .on('click', function(d) {
+      d3.selectAll(".bar").transition().duration(500).style("opacity", 0);
+      d3.selectAll(".bar2").transition().duration(500).style("opacity", 0);
+      d3.selectAll(".bar").remove();
+      d3.selectAll(".bar2").remove();
+      drawbars(d);
+     })
     .datum(format);
+
+
 
   rect.append("title")
     .text(function(d) { return titleFormat(new Date(d)); });
@@ -124,15 +125,22 @@ function drawCalendar(dateData){
       })
       .object(dateData)
 
-
-
+  var lookup_h = d3.nest()
+    .key(function(d) { return d.holiday; })
+    .object(dateData);
 
   var scale = d3.scaleLinear()
     .domain(d3.extent(dateData, function(d) { return parseInt(d.total_entry); }))
     .range([0.2,1]); // the interpolate used for color expects a number in the range [0,1] but i don't want the lightest part of the color scheme
 
-  rect.filter(function(d) { return d in lookup; })
+  rect.filter(function(d) {
+    return d in lookup; })
     .style("fill", function(d) { return d3.interpolateBlues(scale(lookup[d])); })
+
+  rect.filter(function(d) { console.log(lookup_h)
+    return d in lookup_h})
+    .style("fill", "red");
+
 
     var tables = d3.select("body").append("svg")
         .attr("width","80%")
@@ -188,23 +196,44 @@ function drawCalendar(dateData){
 
     var station_entry = ["na_entry", "qa_entry", "gk_entry", "c_entry", "s_entry", "o_entry", "sb_entry", "ba_entry", "g_entry", "b_entry", "a_entry", "m_entry", "t_entry"]
     var station_exit = ["na_exit", "qa_exit", "gk_exit", "c_exit", "s_exit", "o_exit", "sb_exit", "ba_exit", "g_exit", "b_exit", "a_exit", "m_exit", "t_exit"]
-    console.log(station_entry[0])
-    tables.selectAll(".bar")
+
+    var div = d3.select("body").append("div")
+        .attr("class", "tooltip")
+        .style("opacity", 0);
+
+    var lols = tables.selectAll(".bar")
       .data(stations)
       .enter().append("rect")
         .attr("class", "bar")
-        .transition()
-        .duration(200)
-        .style("opacity", .9)
         .attr("y",  function(d) {
           return x(d); })
         .attr("x", mid_right)
         .attr("height", 20)
         .attr("width", function (d,i) {
         var temp1 = productsById[dataas][0][station_entry[i]]
-        console.log(y(temp1))
         return y(temp1)-mid_right;
-        })
+      })
+
+      lols.transition()
+            .duration(200)
+            .style("opacity", .9)
+
+      lols.on("mouseover", function(d,i) {
+        div.transition()
+        .duration(200)
+        .style("opacity", .9);
+        div	.html(d)
+        .style("left", (d3.event.pageX) + "px")
+        .style("top", (d3.event.pageY - 28) + "px");
+
+      }).on("mouseout", function(d) {
+            div.transition()
+                .duration(500)
+                .style("opacity", 0);
+        });
+
+
+
 
     tables.selectAll(".bar2")
       .data(stations)
