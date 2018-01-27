@@ -32,10 +32,19 @@ function drawCalendar(dateData){
   y2.domain([100000,0])
   x.domain(stations);
 
-  var svg = d3.select("body").append("svg")
-      .attr("width","80%")
+  var svg = d3.select("#chart").append("svg")
+      .attr("width","70%")
       .attr("viewBox","0 0 "+(xOffset+width)+" 300")
 
+
+    // Define the div for the tooltip-calendar
+    var div_c = d3.select("#chart").append("div")
+        .attr("class", "tooltip-calendar")
+        .style("opacity", 0);
+
+    var div = d3.select("chart").append("div")
+        .attr("class", "tooltip-bar")
+        .style("opacity", 0);
 
   var day = d3.timeFormat("%w"),
       week = d3.timeFormat("%U"),
@@ -77,26 +86,66 @@ function drawCalendar(dateData){
     .attr("text-anchor", "middle")
     .text(function(d) { return monthName(d); })
 
-    var div = d3.select("body").append("div")
-        .attr("class", "tooltip")
-        .style("opacity", 0);
+
+
+  svg_months.selectAll("rect.day-background")
+   .data(function(d, i) {
+     return d3.timeDays(d, new Date(d.getFullYear(), d.getMonth()+1, 1)); })
+   .enter().append("rect")
+   .attr("class", "dayback")
+   .attr("width", cellSize-2)
+   .attr("height", cellSize-2)
+   .attr("rx", 3).attr("ry", 3) // rounded corners
+   .attr("fill", '#282828') // default light grey fill
+   .attr("y", function(d) { return (day(d) * cellSize) + (day(d) * cellMargin) + cellMargin + calY; })
+   .attr("x", function(d) {
+     return xOffset+calX+(week(d) * cellSize) ;})
+
 
   var rect = svg_months.selectAll("rect.day")
     .data(function(d, i) {
       return d3.timeDays(d, new Date(d.getFullYear(), d.getMonth()+1, 1)); })
     .enter().append("rect")
     .attr("class", "day")
-    .attr("width", cellSize)
-    .attr("height", cellSize)
+    .attr("width", cellSize -5)
+    .attr("height", cellSize - 5)
     .attr("rx", 3).attr("ry", 3) // rounded corners
     .attr("fill", '#eaeaea') // default light grey fill
-    .attr("y", function(d) { return (day(d) * cellSize) + (day(d) * cellMargin) + cellMargin + calY; })
-    .attr("x", function(d) {return xOffset+calX+(week(d) * cellSize) ;})
+    .attr("y", function(d) { return (day(d) * cellSize + 1) + (day(d) * cellMargin) + cellMargin + calY; })
+    .attr("x", function(d,i) {
+      return xOffset+calX+(week(d) * cellSize + 1) ;})
     .on("mouseover", function(d) {
+      var xPos = +d3.select(this).attr("x")
+      var wid = +d3.select(this).attr("width");
+      d3.select(this).attr("width", wid + 5).attr("height", wid + 5);
 
+      div_c.transition()
+                .duration(500)
+                .style("opacity", .9);
+
+      if (productsById[d][0]["station"]){
+
+      console.log("yo")
+      }
+
+      div_c.html( "<b>Date:</b> " + productsById[d][0]["date"] +"<br />"
+                  +"<b>Total Entries:</b> " + productsById[d][0]["total_entry"] +"<br />"
+                  +"<b>Total Exit:</b> " + productsById[d][0]["total_exit"] +"<br />"
+                  +"<b>Holiday:</b> " + productsById[d][0]["holiday_reason"] +"<br />"
+                  +"<b>Precipitation:</b> " + productsById[d][0]["precip"] +"<br />"
+                  +"<b>Mrt Breakdown: </b> " + productsById[d][0]["station"]  +"<br />"
+                  + "<b>Train Direction: </b> " + productsById[d][0]["dir"]  +"<br />"
+                  +"<b>Breakdown Time: </b> " + productsById[d][0]["time"] +"<br />"
+                  +"<b>Breakdown Reason: </b> " + productsById[d][0]["reason"] +"<br />")
+          .style("left", (d3.event.pageX) + "px")
+          .style("top", (d3.event.pageY) + "px");
         })
     .on("mouseout", function(d) {
+      d3.select(this).attr("width", cellSize - 5).attr("height", cellSize - 5);
 
+      div_c.transition()
+      .duration(500)
+      .style("opacity", 0);
     })
     .on('click', function(d) {
       d3.selectAll(".bar").transition().duration(500).style("opacity", 0);
@@ -109,8 +158,6 @@ function drawCalendar(dateData){
 
 
 
-  rect.append("title")
-    .text(function(d) { return titleFormat(new Date(d)); });
 
   var lookup = d3.nest()
     .key(function(d) { return d.date; })
@@ -129,29 +176,90 @@ function drawCalendar(dateData){
     .key(function(d) { return d.holiday; })
     .object(dateData);
 
+  var lookup_b = d3.nest()
+    .key(function(d) { return d.date_break; })
+    .object(dateData);
+
   var scale = d3.scaleLinear()
     .domain(d3.extent(dateData, function(d) { return parseInt(d.total_entry); }))
     .range([0.2,1]); // the interpolate used for color expects a number in the range [0,1] but i don't want the lightest part of the color scheme
 
-  rect.filter(function(d) {
+
+
+  var reg = rect.filter(function(d) {
     return d in lookup; })
-    .style("fill", function(d) { return d3.interpolateBlues(scale(lookup[d])); })
-
-  rect.filter(function(d) { console.log(lookup_h)
-    return d in lookup_h})
-    .style("fill", "red");
+    .attr("id", "redLine")
+    .style("fill", function(d) {
+        return d3.interpolateLab("lightblue","#3500d3")(scale(lookup[d])); })
 
 
-    var tables = d3.select("body").append("svg")
-        .attr("width","80%")
-        .attr("viewBox","0 0 "+(xOffset+width)+" 1000")
+
+
+        svg.append("text")
+        	.attr("x", 100)
+        	.attr("y", 30)
+        	.attr("class", "legend")
+        	.text("Holidays");
+
+        svg.append("rect")
+        .attr("x", 75)
+        .attr("y", 17)
+        .attr("width", cellSize -5)
+        .attr("height", cellSize - 5)
+        .attr("rx", 3).attr("ry", 3) // rounded corners
+        .attr("fill", '#eaeaea') // default light grey fill
+        .on("click", function(){
+          // Determine if current line is visible
+          var active   = redLine.active ? false : true ,
+            filler = active ? function(d) {
+                return d3.interpolateLab("lightblue","#3500d3")(scale(lookup[d])); }:"red";
+          // Hide or show the elements
+          rect.filter(function(d) {
+            return d in lookup_h; })
+            .attr("id", "redLine")
+            .style("fill", filler)
+              .style("opacity", 1);
+          // Update whether or not the elements are active
+          redLine.active = active;
+        })
+
+
+
+        svg.append("text")
+        	.attr("x", 200)
+        	.attr("y", 30)
+        	.attr("class", "legend")
+        	.style("fill", "red")
+        	.on("click", function(){
+        		// Determine if current line is visible
+        		var active   = redLine.active ? false : true ,
+              filler = active ? function(d) {
+                  return d3.interpolateLab("lightblue","#3500d3")(scale(lookup[d])); }:"orange";
+        		// Hide or show the elements
+            rect.filter(function(d) {
+              return d in lookup_b; })
+              .attr("id", "redLine")
+              .style("fill", filler)
+                .style("opacity", 1);
+        		// Update whether or not the elements are active
+        		redLine.active = active;
+        	})
+        	.text("Mrt Breaks");
+
+
+
+    var tables = d3.select("#chart").append("svg")
+      .attr("width","70%")
+      .attr("viewBox","0 0 "+(xOffset+width)+" 700")
 
     tables.append("g")
       .attr("class", "axis axis--y")
       .call(d3.axisBottom(y))
       .attr("transform", "translate(0,400)")
+      .style("fill", "rgb(153, 161, 226)")
       .selectAll("text")
         .style("text-anchor", "end")
+        .style("fill", "rgb(153, 161, 226)")
         .attr("dx", "-.8em")
         .attr("dy", "-.55em")
         .attr("transform", "rotate(-90)" )
@@ -160,8 +268,10 @@ function drawCalendar(dateData){
     .attr("class", "axis axis--y")
     .call(d3.axisBottom(y2))
     .attr("transform", "translate(0,400)")
+    .style("fill", "rgb(153, 161, 226)")
     .selectAll("text")
       .style("text-anchor", "end")
+      .style("fill", "rgb(153, 161, 226)")
       .attr("dx", "-.8em")
       .attr("dy", "-.55em")
       .attr("transform", "rotate(-90)" )
@@ -173,13 +283,14 @@ function drawCalendar(dateData){
     .selectAll("text")
     .attr("x", middle+10)
       .style("text-anchor", "middle")
+      .style("fill", "rgb(153, 161, 226)")
       .attr("dx", "-.8em")
 
       tables.selectAll(".bar-outline").data(stations).enter().append("rect")
           .attr("y", function(d) {
             return x(d) + 1; } )
           .attr("x", mid_right)
-          .attr("fill",'#eaeaea')
+          .attr("fill",'#282828')
           .attr("height", 22)
           .attr("width", (width - mid_right - 20));
 
@@ -187,7 +298,7 @@ function drawCalendar(dateData){
           .attr("y", function(d) {
             return x(d) + 1; } )
           .attr("x", 20)
-          .attr("fill",'#eaeaea')
+          .attr("fill",'#282828')
           .attr("height", 22)
           .attr("width", (mid_left-20));
 
@@ -197,26 +308,23 @@ function drawCalendar(dateData){
     var station_entry = ["na_entry", "qa_entry", "gk_entry", "c_entry", "s_entry", "o_entry", "sb_entry", "ba_entry", "g_entry", "b_entry", "a_entry", "m_entry", "t_entry"]
     var station_exit = ["na_exit", "qa_exit", "gk_exit", "c_exit", "s_exit", "o_exit", "sb_exit", "ba_exit", "g_exit", "b_exit", "a_exit", "m_exit", "t_exit"]
 
-    var div = d3.select("body").append("div")
-        .attr("class", "tooltip")
-        .style("opacity", 0);
 
     var lols = tables.selectAll(".bar")
-      .data(stations)
-      .enter().append("rect")
-        .attr("class", "bar")
-        .attr("y",  function(d) {
-          return x(d); })
-        .attr("x", mid_right)
-        .attr("height", 20)
-        .attr("width", function (d,i) {
-        var temp1 = productsById[dataas][0][station_entry[i]]
-        return y(temp1)-mid_right;
-      })
+          .data(stations)
+          .enter().append("rect")
+            .attr("class", "bar")
+            .attr("y",  function(d) {
+              return x(d); })
+            .attr("height", 20)
+
 
       lols.transition()
-            .duration(200)
-            .style("opacity", .9)
+                .duration(300)
+                .attr("width", function (d,i) {
+                var temp1 = productsById[dataas][0][station_entry[i]]
+                return y(temp1)-mid_right;
+              })
+              .attr("x", mid_right)
 
       lols.on("mouseover", function(d,i) {
         div.transition()
@@ -235,24 +343,39 @@ function drawCalendar(dateData){
 
 
 
-    tables.selectAll(".bar2")
+    var lols2 = tables.selectAll(".bar2")
       .data(stations)
       .enter().append("rect")
         .attr("class", "bar")
-        .transition()
-        .duration(200)
-        .style("opacity", .9)
         .attr("y",  function(d) {
           return x(d); })
-        .attr("x", function (d,i) {
-        var temp1 = productsById[dataas][0][station_exit[i]]
-        return y2(temp1);
-        })
         .attr("height", 20)
-        .attr("width", function (d,i) {
-        var temp1 = productsById[dataas][0][station_exit[i]]
-        return mid_left - y2(temp1);
-        })
+
+
+        lols2.transition()
+            .duration(300)
+            .attr("x", function (d,i) {
+            var temp1 = productsById[dataas][0][station_exit[i]]
+            return y2(temp1);
+            })
+            .attr("width", function (d,i) {
+            var temp1 = productsById[dataas][0][station_exit[i]]
+            return mid_left - y2(temp1);
+            })
+
+        lols2.on("mouseover", function(d,i) {
+          div.transition()
+          .duration(200)
+          .style("opacity", .9);
+          div	.html(d)
+          .style("left", (d3.event.pageX) + "px")
+          .style("top", (d3.event.pageY - 28) + "px");
+
+        }).on("mouseout", function(d) {
+              div.transition()
+                  .duration(500)
+                  .style("opacity", 0);
+          });
 
   }
 
