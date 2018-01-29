@@ -1,5 +1,6 @@
 function drawCalendar(dateData){
 
+
   var weeksInMonth = function(month){
     var m = d3.timeMonth.floor(month)
     return d3.timeWeeks(d3.timeWeek.floor(m), d3.timeMonth.offset(m,1)).length;
@@ -19,7 +20,7 @@ function drawCalendar(dateData){
   var height = 90;
   var xOffset=20;
   var calX=25;
-  var calY=50;//offset of calendar in each group
+  var calY=70;//offset of calendar in each group
 
 
   //bars variables
@@ -32,19 +33,25 @@ function drawCalendar(dateData){
   y2.domain([100000,0])
   x.domain(stations);
 
-  var svg = d3.select("#chart").append("svg")
+  var svg = d3.select("#chart1").append("svg")
       .attr("width","70%")
       .attr("viewBox","0 0 "+(xOffset+width)+" 300")
 
 
     // Define the div for the tooltip-calendar
-    var div_c = d3.select("#chart").append("div")
+    var div_c = d3.select("#chart1").append("div")
         .attr("class", "tooltip-calendar")
         .style("opacity", 0);
 
-    var div = d3.select("chart").append("div")
+    var div = d3.select("#chart1").append("div")
         .attr("class", "tooltip-bar")
         .style("opacity", 0);
+
+
+    var tables = d3.select("#chart1").append("svg")
+      .attr("width","70%")
+      .attr("viewBox","0 0 "+(xOffset+width)+" 700")
+
 
   var day = d3.timeFormat("%w"),
       week = d3.timeFormat("%U"),
@@ -182,37 +189,88 @@ function drawCalendar(dateData){
 
   var scale = d3.scaleLinear()
     .domain(d3.extent(dateData, function(d) { return parseInt(d.total_entry); }))
-    .range([0.2,1]); // the interpolate used for color expects a number in the range [0,1] but i don't want the lightest part of the color scheme
+    .range([0,1]); // the interpolate used for color expects a number in the range [0,1] but i don't want the lightest part of the color scheme
 
 
 
-  var reg = rect.filter(function(d) {
+    rect.filter(function(d) {
     return d in lookup; })
     .attr("id", "redLine")
     .style("fill", function(d) {
         return d3.interpolateLab("lightblue","#3500d3")(scale(lookup[d])); })
 
 
-
-
-        svg.append("text")
-        	.attr("x", 100)
-        	.attr("y", 30)
-        	.attr("class", "legend")
-        	.text("Holidays");
-
         svg.append("rect")
-        .attr("x", 75)
-        .attr("y", 17)
+        .attr("x", 50)
+        .attr("y", 10)
         .attr("width", cellSize -5)
         .attr("height", cellSize - 5)
         .attr("rx", 3).attr("ry", 3) // rounded corners
-        .attr("fill", '#eaeaea') // default light grey fill
+        .style("fill", function(d) {
+            return d3.interpolateLab("lightblue","#3500d3")(scale(400000)); })
+
+        svg.append("rect")
+        .attr("x", 50)
+        .attr("y", 30)
+        .attr("width", cellSize -5)
+        .attr("height", cellSize - 5)
+        .attr("rx", 3).attr("ry", 3) // rounded corners
+        .style("fill", function(d) {
+            return d3.interpolateLab("lightblue","#3500d3")(scale(300000)); })
+
+        svg.append("rect")
+        .attr("x", 50)
+        .attr("y", 50)
+        .attr("width", cellSize -5)
+        .attr("height", cellSize - 5)
+        .attr("rx", 3).attr("ry", 3) // rounded corners
+        .style("fill", function(d) {
+            return d3.interpolateLab("lightblue","#3500d3")(scale(200000)); })
+
+        svg.append("text")
+        	.attr("x", 70)
+        	.attr("y", 23)
+        	.attr("class", "legend")
+        	.text("400K");
+
+        svg.append("text")
+          .attr("x", 70)
+          .attr("y", 43)
+          .attr("class", "legend")
+          .text("300K");
+
+        svg.append("text")
+          .attr("x", 70)
+          .attr("y", 63)
+          .attr("class", "legend")
+          .text("200K");
+
+        svg.append("text")
+        	.attr("x", width - 100)
+        	.attr("y", 20)
+        	.attr("class", "legend")
+        	.text("Holidays");
+
+        svg.append("text")
+          .attr("x", width - 100)
+          .attr("y", 40)
+          .attr("class", "legend")
+          .text("Mrt Issues");
+
+
+
+        svg.append("rect")
+        .attr("x", width - 125)
+        .attr("y", 7)
+        .attr("width", cellSize -5)
+        .attr("height", cellSize - 5)
+        .attr("rx", 3).attr("ry", 3) // rounded corners
+        .attr("fill", 'green') // default light grey fill
         .on("click", function(){
           // Determine if current line is visible
           var active   = redLine.active ? false : true ,
             filler = active ? function(d) {
-                return d3.interpolateLab("lightblue","#3500d3")(scale(lookup[d])); }:"red";
+                return d3.interpolateLab("lightblue","#3500d3")(scale(lookup[d])); }:"green";
           // Hide or show the elements
           rect.filter(function(d) {
             return d in lookup_h; })
@@ -222,35 +280,44 @@ function drawCalendar(dateData){
           // Update whether or not the elements are active
           redLine.active = active;
         })
+        .on("mouseover", function(d) {
+          var xPos = +d3.select(this).attr("x")
+          var wid = +d3.select(this).attr("width");
+          d3.select(this).attr("width", wid + 5).attr("height", wid + 5);
+        })
+          .on("mouseout", function(d) {
+            d3.select(this).attr("width", cellSize - 5).attr("height", cellSize - 5);
+          })
 
-
-
-        svg.append("text")
-        	.attr("x", 200)
-        	.attr("y", 30)
-        	.attr("class", "legend")
-        	.style("fill", "red")
-        	.on("click", function(){
-        		// Determine if current line is visible
-        		var active   = redLine.active ? false : true ,
-              filler = active ? function(d) {
-                  return d3.interpolateLab("lightblue","#3500d3")(scale(lookup[d])); }:"orange";
-        		// Hide or show the elements
-            rect.filter(function(d) {
-              return d in lookup_b; })
-              .attr("id", "redLine")
-              .style("fill", filler)
-                .style("opacity", 1);
-        		// Update whether or not the elements are active
-        		redLine.active = active;
-        	})
-        	.text("Mrt Breaks");
-
-
-
-    var tables = d3.select("#chart").append("svg")
-      .attr("width","70%")
-      .attr("viewBox","0 0 "+(xOffset+width)+" 700")
+        svg.append("rect")
+        .attr("x", width - 125)
+        .attr("y", 27)
+        .attr("width", cellSize -5)
+        .attr("height", cellSize - 5)
+        .attr("rx", 3).attr("ry", 3) // rounded corners
+        .attr("fill", 'orange') // default light grey fill
+        .on("click", function(){
+          // Determine if current line is visible
+          var active  = redLine.active ? false : true ,
+            filler = active ? function(d) {
+                return d3.interpolateLab("lightblue","#3500d3")(scale(lookup[d])); }:"orange";
+          // Hide or show the elements
+          rect.filter(function(d) {
+            return d in lookup_b; })
+            .attr("id", "redLine")
+            .style("fill", filler)
+              .style("opacity", 1);
+          // Update whether or not the elements are active
+          redLine.active = active;
+        })
+      .on("mouseover", function(d) {
+              var xPos = +d3.select(this).attr("x")
+              var wid = +d3.select(this).attr("width");
+              d3.select(this).attr("width", wid + 5).attr("height", wid + 5);
+            })
+              .on("mouseout", function(d) {
+                d3.select(this).attr("width", cellSize - 5).attr("height", cellSize - 5);
+              })
 
     tables.append("g")
       .attr("class", "axis axis--y")
@@ -284,6 +351,7 @@ function drawCalendar(dateData){
     .attr("x", middle+10)
       .style("text-anchor", "middle")
       .style("fill", "rgb(153, 161, 226)")
+      .style("font-size", "15px")
       .attr("dx", "-.8em")
 
       tables.selectAll(".bar-outline").data(stations).enter().append("rect")
@@ -330,10 +398,9 @@ function drawCalendar(dateData){
         div.transition()
         .duration(200)
         .style("opacity", .9);
-        div	.html(d)
+        div	.html(productsById[dataas][0][station_entry[i]])
         .style("left", (d3.event.pageX) + "px")
         .style("top", (d3.event.pageY - 28) + "px");
-
       }).on("mouseout", function(d) {
             div.transition()
                 .duration(500)
@@ -367,10 +434,9 @@ function drawCalendar(dateData){
           div.transition()
           .duration(200)
           .style("opacity", .9);
-          div	.html(d)
+          div	.html(productsById[dataas][0][station_entry[i]])
           .style("left", (d3.event.pageX) + "px")
           .style("top", (d3.event.pageY - 28) + "px");
-
         }).on("mouseout", function(d) {
               div.transition()
                   .duration(500)

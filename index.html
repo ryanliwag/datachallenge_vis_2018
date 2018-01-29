@@ -1,5 +1,9 @@
 <!DOCTYPE html>
+
+
+
 <html>
+
   <head>
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -26,7 +30,9 @@
     .article {
         text-align: middle;
     }
-
+    .article h1{
+        color:white;
+    }
     header {background: black;color:white;}
     footer {background: #aaa;color:white;}
     .nav {background:#eee;}
@@ -48,6 +54,15 @@
         .article {-webkit-flex:5 0px;flex:5 0px;-webkit-order:2;order:2;}
         footer {-webkit-order:3;order:3;}
     }
+
+    .axisRed path{
+  stroke: #3500D3;
+}
+
+.axisRed text{
+  fill: #3500D3;
+  font-size: 15px;
+}
     </style>
   </head>
 
@@ -59,23 +74,30 @@
     <script src="bower_components/d3/d3.min.js"></script>
     <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
         <script src="scripts/calendar-heatmap.js"></script>
+
     <div class="flex-container">
     <header>
       <h1>Visualizing Philippines 2017 MRT Traffic</h1>
     </header>
 
     <article class="article">
-      <h1>London</h1>
-      <p>London is the capital city of England. It is the most populous city in the United Kingdom,
-      with a metropolitan area of over 13 million inhabitants.</p>
-      <p>Standing on the River Thames, London has been a major settlement for two millennia,
-      its history going back to its founding by the Romans, who named it Londinium.</p>
-      <p><strong>Resize this page to see what happens!</strong></p>
 
-        <div id="chart"></div>
+      <h1>London</h1>
+      <p> This serves as our entry for Accenture's <a href="https://www.accenture.com/ph-en/Careers/accenture-data-challenge">Data Visuallization challenge</a>.
+        Our Visualization aims to summarize the MRT3 performance last year ... Work in Progress
+
+      <p><strong>Interact with Visualization using PC, not too good on phones :)</strong></p>
+
+      <div id="chart1"></div>
+
+      <svg width="1100" height="500" viewBox="0 0 1100 500" preserveAspectRatio="x200Y200 meet"></svg>
+
+      <script src="scripts/line-chart.js"></script>
+      <div id="chart2"></div>
+
     </article>
 
-    <footer>Copyright &copy; W3Schools.com</footer>
+    <footer>tstststs</footer>
     </div>
   </body>
 </html>

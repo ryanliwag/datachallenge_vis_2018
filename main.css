@@ -45,8 +45,8 @@ color: white
 div.tooltip-bar {
     position: absolute;
     text-align: center;
-    width: 400px;
-    height: 400px;
+    width: 50px;
+    height: 20px;
     padding: 2px;
     font: 12px sans-serif;
     background: lightsteelblue;
@@ -57,7 +57,7 @@ div.tooltip-calendar {
     position: absolute;
     text-align: left;
     width: 280px;
-    height: 340px;
+    height: 320px;
     padding: 50px;
     font: 17px sans-serif;
     color: white;
@@ -73,8 +73,6 @@ div.tooltip-calendar {
 
 br {
    display: block;
-   color: #0C0032;
-   margin: 4px 0;
 }
 
 .svg-container {
@@ -99,10 +97,20 @@ br {
 a {
   color: #900;
   text-decoration: none;
-  position: middle;
+
 }
 
 a:hover {
   color: red;
   position: relative;
+}
+
+.line {
+  fill: none;
+  stroke: steelblue;
+  stroke-width: 2px;
+}
+
+.area {
+  fill: lightsteelblue;
 }
