@@ -63,6 +63,23 @@
   fill: #3500D3;
   font-size: 15px;
 }
+
+#vis {
+    height: 100%;
+    margin: 0;
+}
+.line_entries {
+fill: none;
+stroke: steelblue;
+stroke-width: 5px;
+}
+
+.line_exits {
+fill: none;
+stroke: orange;
+stroke-width: 5px;
+}
+
     </style>
   </head>
 
@@ -94,6 +111,16 @@
 
       <script src="scripts/line-chart.js"></script>
       <div id="chart2"></div>
+
+      <script src="scripts/time_slider.js"></script>
+
+      <form>
+          <label for="Hour">Please select a time: </label>
+          <input type="range" min=4 max=23 step=1 id="hour" value=4 oninput="selected_hour.value = hour.value">
+          <output name="selected_hour" id="selected_hour">4</output>:00
+      </form>
+
+      <div id="vis"></div>
 
     </article>
 

@@ -3,13 +3,13 @@ function draw_timeview(dateData){
   //get nested data with hour as keys
   var data_all = d3.nest()
     .key(function(d) {
-      return d.hour;
+      return d.time;
     })
     .object(dateData)
 
 
 
-    var width = 800
+    var width = 1000
     var height = 600
 
     var margin = {
@@ -66,7 +66,7 @@ function draw(hour) {
 
     x_scale.domain(months);
 
-    var max_value = 40000;
+    var max_value = 200000;
 
     y_scale.domain([0, max_value]);
     colour_scale.domain([0, max_value]);

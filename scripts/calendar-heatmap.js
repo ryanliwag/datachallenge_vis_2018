@@ -24,7 +24,7 @@ function drawCalendar(dateData){
 
 
   //bars variables
-  var x = d3.scaleBand().rangeRound([0, 400]).paddingInner(0.06),
+  var x = d3.scaleBand().rangeRound([50, 450]).paddingInner(0.06),
       y = d3.scaleLinear().rangeRound([mid_right, width-20]),
       y2 = d3.scaleLinear().rangeRound([20, mid_left]);
 
@@ -132,7 +132,7 @@ function drawCalendar(dateData){
 
       if (productsById[d][0]["station"]){
 
-      console.log("yo")
+
       }
 
       div_c.html( "<b>Date:</b> " + productsById[d][0]["date"] +"<br />"
@@ -197,7 +197,7 @@ function drawCalendar(dateData){
     return d in lookup; })
     .attr("id", "redLine")
     .style("fill", function(d) {
-        return d3.interpolateLab("lightblue","#3500d3")(scale(lookup[d])); })
+        return d3.interpolateLab("#FEEB65","#E45215")(scale(lookup[d])); })
 
 
         svg.append("rect")
@@ -207,7 +207,7 @@ function drawCalendar(dateData){
         .attr("height", cellSize - 5)
         .attr("rx", 3).attr("ry", 3) // rounded corners
         .style("fill", function(d) {
-            return d3.interpolateLab("lightblue","#3500d3")(scale(400000)); })
+            return d3.interpolateLab("#FEEB65","#E45215")(scale(400000)); })
 
         svg.append("rect")
         .attr("x", 50)
@@ -216,7 +216,7 @@ function drawCalendar(dateData){
         .attr("height", cellSize - 5)
         .attr("rx", 3).attr("ry", 3) // rounded corners
         .style("fill", function(d) {
-            return d3.interpolateLab("lightblue","#3500d3")(scale(300000)); })
+            return d3.interpolateLab("#FEEB65","#E45215")(scale(300000)); })
 
         svg.append("rect")
         .attr("x", 50)
@@ -225,7 +225,7 @@ function drawCalendar(dateData){
         .attr("height", cellSize - 5)
         .attr("rx", 3).attr("ry", 3) // rounded corners
         .style("fill", function(d) {
-            return d3.interpolateLab("lightblue","#3500d3")(scale(200000)); })
+            return d3.interpolateLab("#FEEB65","#E45215")(scale(200000)); })
 
         svg.append("text")
         	.attr("x", 70)
@@ -270,7 +270,7 @@ function drawCalendar(dateData){
           // Determine if current line is visible
           var active   = redLine.active ? false : true ,
             filler = active ? function(d) {
-                return d3.interpolateLab("lightblue","#3500d3")(scale(lookup[d])); }:"green";
+                return d3.interpolateLab("#FEEB65","#E45215")(scale(lookup[d])); }:"green";
           // Hide or show the elements
           rect.filter(function(d) {
             return d in lookup_h; })
@@ -295,12 +295,12 @@ function drawCalendar(dateData){
         .attr("width", cellSize -5)
         .attr("height", cellSize - 5)
         .attr("rx", 3).attr("ry", 3) // rounded corners
-        .attr("fill", 'orange') // default light grey fill
+        .attr("fill", 'red') // default light grey fill
         .on("click", function(){
           // Determine if current line is visible
           var active  = redLine.active ? false : true ,
             filler = active ? function(d) {
-                return d3.interpolateLab("lightblue","#3500d3")(scale(lookup[d])); }:"orange";
+                return d3.interpolateLab("#FEEB65","#E45215")(scale(lookup[d])); }:"red";
           // Hide or show the elements
           rect.filter(function(d) {
             return d in lookup_b; })
@@ -322,23 +322,44 @@ function drawCalendar(dateData){
     tables.append("g")
       .attr("class", "axis axis--y")
       .call(d3.axisBottom(y))
-      .attr("transform", "translate(0,400)")
-      .style("fill", "rgb(153, 161, 226)")
+      .attr("transform", "translate(0,450)")
+      .style("fill", "rgb(246, 164, 61)")
       .selectAll("text")
         .style("text-anchor", "end")
-        .style("fill", "rgb(153, 161, 226)")
+        .style("fill", "black")
         .attr("dx", "-.8em")
         .attr("dy", "-.55em")
         .attr("transform", "rotate(-90)" )
 
+
+
+
+      tables.append("text")
+            .attr("x", mid_left / 2)
+            .attr("y", 30)
+            .attr("class", "titles_tables")
+            .text("Exit");
+
+      tables.append("text")
+            .attr("x", mid_right + (1120 - mid_right)/2 - 40)
+            .attr("y", 30)
+            .attr("class", "titles_tables")
+            .text("Entries");
+
+      tables.append("text")
+            .attr("x", middle - 80)
+            .attr("y", 20)
+            .attr("class", "titles_tables")
+            .text("MRT Daily Foot Traffic");
+
   tables.append("g")
     .attr("class", "axis axis--y")
     .call(d3.axisBottom(y2))
-    .attr("transform", "translate(0,400)")
-    .style("fill", "rgb(153, 161, 226)")
+    .attr("transform", "translate(0,450)")
+    .style("fill", "rgb(246, 164, 61)")
     .selectAll("text")
-      .style("text-anchor", "end")
-      .style("fill", "rgb(153, 161, 226)")
+      .attr("transform","rotate(90)")
+      .style("fill", "black")
       .attr("dx", "-.8em")
       .attr("dy", "-.55em")
       .attr("transform", "rotate(-90)" )
@@ -350,31 +371,18 @@ function drawCalendar(dateData){
     .selectAll("text")
     .attr("x", middle+10)
       .style("text-anchor", "middle")
-      .style("fill", "rgb(153, 161, 226)")
+      .style("fill", "#777")
       .style("font-size", "15px")
       .attr("dx", "-.8em")
 
-      tables.selectAll(".bar-outline").data(stations).enter().append("rect")
-          .attr("y", function(d) {
-            return x(d) + 1; } )
-          .attr("x", mid_right)
-          .attr("fill",'#282828')
-          .attr("height", 22)
-          .attr("width", (width - mid_right - 20));
 
-      tables.selectAll(".bar-outline2").data(stations).enter().append("rect")
-          .attr("y", function(d) {
-            return x(d) + 1; } )
-          .attr("x", 20)
-          .attr("fill",'#282828')
-          .attr("height", 22)
-          .attr("width", (mid_left-20));
 
 
   function drawbars(dataas){
 
     var station_entry = ["na_entry", "qa_entry", "gk_entry", "c_entry", "s_entry", "o_entry", "sb_entry", "ba_entry", "g_entry", "b_entry", "a_entry", "m_entry", "t_entry"]
-    var station_exit = ["na_exit", "qa_exit", "gk_exit", "c_exit", "s_exit", "o_exit", "sb_exit", "ba_exit", "g_exit", "b_exit", "a_exit", "m_exit", "t_exit"]
+    var station_exit = [  ]
+
 
 
     var lols = tables.selectAll(".bar")
