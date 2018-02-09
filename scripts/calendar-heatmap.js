@@ -264,7 +264,6 @@ function drawCalendar(dateData){
         .attr("y", 7)
         .attr("width", cellSize -5)
         .attr("height", cellSize - 5)
-        .attr("rx", 3).attr("ry", 3) // rounded corners
         .attr("fill", 'green') // default light grey fill
         .on("click", function(){
           // Determine if current line is visible
@@ -294,7 +293,6 @@ function drawCalendar(dateData){
         .attr("y", 27)
         .attr("width", cellSize -5)
         .attr("height", cellSize - 5)
-        .attr("rx", 3).attr("ry", 3) // rounded corners
         .attr("fill", 'red') // default light grey fill
         .on("click", function(){
           // Determine if current line is visible
@@ -358,6 +356,7 @@ function drawCalendar(dateData){
     .attr("transform", "translate(0,450)")
     .style("fill", "rgb(246, 164, 61)")
     .selectAll("text")
+      .style("text-anchor", "end")
       .attr("transform","rotate(90)")
       .style("fill", "black")
       .attr("dx", "-.8em")
@@ -381,7 +380,7 @@ function drawCalendar(dateData){
   function drawbars(dataas){
 
     var station_entry = ["na_entry", "qa_entry", "gk_entry", "c_entry", "s_entry", "o_entry", "sb_entry", "ba_entry", "g_entry", "b_entry", "a_entry", "m_entry", "t_entry"]
-    var station_exit = [  ]
+    var station_exit = [ "na_exit", "qa_exit", "gk_exit", "c_exit", "s_exit", "o_exit", "sb_exit", "ba_exit", "g_exit", "b_exit", "a_exit", "m_exit", "t_exit" ]
 
 
 

@@ -12,75 +12,7 @@
     <script type="text/javascript" src="bower_components/momentjs/min/moment.min.js"></script>
     <link type="text/css" rel="stylesheet" href="main.css"/>
 
-    <style>
-    .flex-container {
-        display: -webkit-flex;
-        display: flex;
-        -webkit-flex-flow: row wrap;
-        flex-flow: row wrap;
-        text-align: center;
-    }
 
-    .flex-container > * {
-        padding: 15px;
-        -webkit-flex: 1 100%;
-        flex: 1 100%;
-    }
-
-    .article {
-        text-align: middle;
-    }
-    .article h1{
-        color:white;
-    }
-    header {background: black;color:white;}
-    footer {background: #aaa;color:white;}
-    .nav {background:#eee;}
-
-    .nav ul {
-        list-style-type: none;
-        padding: 0;
-    }
-    .nav ul a {
-        text-decoration: none;
-    }
-
-    .article p {
-        color: white;
-    }
-
-    @media all and (min-width: 768px) {
-        .nav {text-align:left;-webkit-flex: 1 auto;flex:1 auto;-webkit-order:1;order:1;}
-        .article {-webkit-flex:5 0px;flex:5 0px;-webkit-order:2;order:2;}
-        footer {-webkit-order:3;order:3;}
-    }
-
-    .axisRed path{
-  stroke: #3500D3;
-}
-
-.axisRed text{
-  fill: #3500D3;
-  font-size: 15px;
-}
-
-#vis {
-    height: 100%;
-    margin: 0;
-}
-.line_entries {
-fill: none;
-stroke: steelblue;
-stroke-width: 5px;
-}
-
-.line_exits {
-fill: none;
-stroke: orange;
-stroke-width: 5px;
-}
-
-    </style>
   </head>
 
 
@@ -91,33 +23,38 @@ stroke-width: 5px;
     <script src="bower_components/d3/d3.min.js"></script>
     <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
         <script src="scripts/calendar-heatmap.js"></script>
+        <script src="scripts/time_slider.js"></script>
+
 
     <div class="flex-container">
     <header>
       <h1>Visualizing Philippines 2017 MRT Traffic</h1>
+      Our official entry for Accenture's Data Visualization Challenge.
+      <p> Visualizations are also easiest to interact with on a laptop or pc, not too good on phones</p>
     </header>
 
     <article class="article">
 
-      <h1>London</h1>
-      <p> This serves as our entry for Accenture's <a href="https://www.accenture.com/ph-en/Careers/accenture-data-challenge">Data Visuallization challenge</a>.
-        Our Visualization aims to summarize the MRT3 performance last year ... Work in Progress
 
-      <p><strong>Interact with Visualization using PC, not too good on phones :)</strong></p>
+      <h1>MRT Daily Foot Traffic For 2017</h1>
+
+      <p>Note: This calendar heatmap shows total daily Mrt Foot Traffic.
+      Hovering over the elements will give a tool tip display of basic information.</p>
+      <p> Clicking on the elements will give each station's entry and exit information through two barcharts.
+          Holiday and Mrt Issues elements can be toggled to highlight instances througout the year.</p>
 
       <div id="chart1"></div>
 
-      <svg width="1100" height="500" viewBox="0 0 1100 500" preserveAspectRatio="x200Y200 meet"></svg>
 
-      <script src="scripts/line-chart.js"></script>
-      <div id="chart2"></div>
+      <h1>Average Hourly Foot Traffic</h1>
 
-      <script src="scripts/time_slider.js"></script>
+      <p>Note: This hourly data is from 5am to 11pm taken from month of september 2017. Entries and exit on each station can be observed
+      simlpy by adjusting the slider.</p>
 
       <form>
-          <label for="Hour">Please select a time: </label>
-          <input type="range" min=4 max=23 step=1 id="hour" value=4 oninput="selected_hour.value = hour.value">
-          <output name="selected_hour" id="selected_hour">4</output>:00
+          <label for="Hour">Select a Time: </label>
+          <input type="range" min=5 max=23 step=1 id="hour" value=5 oninput="selected_hour.value = hour.value">
+          <p><output name="selected_hour" id="selected_hour">5</output>:00</p>
       </form>
 
       <div id="vis"></div>

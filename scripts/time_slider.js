@@ -84,32 +84,38 @@ function draw(hour) {
     // Add the valueline path.
     svg.append("path")
       .transition()
-      .duration(500)
+      .duration(200)
         .attr("class", "line_entries")
         .attr("d", valueline(months));
 
     svg.append("path")
+        .transition()
+        .duration(200)
         .attr("class", "line_exits")
         .attr("d", valueline2(months));
 
     svg.select('.x.axis')
          .call(x_axis)
+         .style("fill", "rgb(246, 164, 61)")
          .selectAll("text")
-        .attr("transform","rotate(-90)")
-        .style("text-anchor", "end")
-        .attr("dx", "-.8em");
+          .style("text-anchor", "end")
+          .attr("transform","rotate(-90)")
+          .style("fill", "black")
+          .attr("dx", "-.8em")
+          .attr("dy", "-.15em")
 
 
      svg.select('.y.axis')
          .transition(t)
-         .call(y_axis);
+         .call(y_axis)
+         .style("fill", "rgb(246, 164, 61)");
 
        }
 
 
 
 var slider = d3.select('#hour');
-draw(4);
+draw(5);
 slider.on('change', function() {
   console.log(this.value);
   draw(this.value)

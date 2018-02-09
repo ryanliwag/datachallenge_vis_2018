@@ -31,9 +31,12 @@ color: white
 .key    {font-size:0.5em;}
 
 .bar {
-  fill: #3500d3;
+  fill: rgb(246, 161, 60);
 }
 
+.bar2 {
+  fill: rgb(246, 161, 60);
+}
 .bar:hover {
   fill: brown;
 }
@@ -49,20 +52,22 @@ div.tooltip-bar {
     height: 20px;
     padding: 2px;
     font: 12px sans-serif;
-    background: lightsteelblue;
+    background: rgb(246, 161, 60);
     border: 0px;
+      border-radius: 20px;
     pointer-events: none;
 }
 div.tooltip-calendar {
     position: absolute;
     text-align: left;
-    width: 280px;
-    height: 320px;
-    padding: 50px;
-    font: 17px sans-serif;
-    color: white;
-    background: #3500D3;
+    width: 200px;
+    height: 240px;
+    padding: 20px;
+    font: 12px sans-serif;
+    color: black;
+    background: rgb(246, 161, 60);
     border: 100px;
+    border-radius: 20px;
     pointer-events: none;
 }
 
@@ -113,4 +118,70 @@ a:hover {
 
 .area {
   fill: lightsteelblue;
+}
+
+.flex-container {
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-flow: row wrap;
+    flex-flow: row wrap;
+    text-align: center;
+}
+
+.flex-container > * {
+    padding: 15px;
+    -webkit-flex: 1 100%;
+    flex: 1 100%;
+}
+
+.article {
+    text-align: middle;
+}
+.article h1{
+    color:black;
+}
+header {background: white;color:black;}
+footer {background: #aaa;color:white;}
+.nav {background:#eee;}
+
+.nav ul {
+    list-style-type: none;
+    padding: 0;
+}
+.nav ul a {
+    text-decoration: none;
+}
+
+.article p {
+    color: black;
+}
+
+@media all and (min-width: 768px) {
+    .nav {text-align:left;-webkit-flex: 1 auto;flex:1 auto;-webkit-order:1;order:1;}
+    .article {-webkit-flex:5 0px;flex:5 0px;-webkit-order:2;order:2;}
+    footer {-webkit-order:3;order:3;}
+}
+
+.axisRed path{
+stroke: #3500D3;
+}
+
+.axisRed text{
+fill: #3500D3;
+font-size: 15px;
+}
+
+#vis {
+margin: 0;
+}
+.line_entries {
+fill: none;
+stroke: green;
+stroke-width: 2px;
+}
+
+.line_exits {
+fill: none;
+stroke: red;
+stroke-width: 2px;
 }
