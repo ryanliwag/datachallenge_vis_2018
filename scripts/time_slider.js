@@ -57,6 +57,36 @@ var t = d3.transition()
     .duration(2000);
 
 
+    svg.append("rect")
+    .attr("x", width - 95)
+    .attr("y", 12)
+    .attr("width", 20)
+    .attr("height", 5)
+    .attr("rx", 3).attr("ry", 3) // rounded corners
+    .style("fill", "red");
+
+
+    svg.append("text")
+      .attr("x", width - 70)
+      .attr("y", 20)
+      .attr("class", "legend")
+      .text("Exits");
+
+      svg.append("rect")
+      .attr("x", width - 95)
+      .attr("y", 32)
+      .attr("width", 20)
+      .attr("height", 5)
+      .attr("rx", 3).attr("ry", 3) // rounded corners
+      .style("fill", "green");
+
+
+      svg.append("text")
+        .attr("x", width - 70)
+        .attr("y", 40)
+        .attr("class", "legend")
+        .text("Entries");
+
 function draw(hour) {
 
   var months_entry = ["na_entry", "qa_entry", "gk_entry", "c_entry", "s_entry", "o_entry", "sb_entry", "ba_entry", "g_entry", "b_entry", "a_entry", "m_entry", "t_entry"]
@@ -74,11 +104,11 @@ function draw(hour) {
     svg.selectAll("path").remove()
 
     var valueline = d3.line()
-        .x(function(d, i) { return x_scale(d) + 40; })
+        .x(function(d, i) { return x_scale(d) + 34; })
         .y(function(d, i) { return y_scale(data_all[hour][0][months_entry[i]]); });
 
     var valueline2 = d3.line()
-        .x(function(d, i) { return x_scale(d) + 40; })
+        .x(function(d, i) { return x_scale(d) + 34; })
         .y(function(d, i) { return y_scale(data_all[hour][0][months_exit[i]]); });
 
     // Add the valueline path.

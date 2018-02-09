@@ -231,19 +231,19 @@ function drawCalendar(dateData){
         	.attr("x", 70)
         	.attr("y", 23)
         	.attr("class", "legend")
-        	.text("400K");
+        	.text("400,000");
 
         svg.append("text")
           .attr("x", 70)
           .attr("y", 43)
           .attr("class", "legend")
-          .text("300K");
+          .text("300,000");
 
         svg.append("text")
           .attr("x", 70)
           .attr("y", 63)
           .attr("class", "legend")
-          .text("200K");
+          .text("200,000");
 
         svg.append("text")
         	.attr("x", width - 100)
