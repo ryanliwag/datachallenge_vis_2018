@@ -163,12 +163,12 @@ footer {background: #aaa;color:white;}
 }
 
 .axisRed path{
-stroke: #3500D3;
+stroke: rgb(246, 164, 61);
 }
 
 .axisRed text{
-fill: #3500D3;
-font-size: 15px;
+fill: black;
+font-size: 10px;
 }
 
 #vis {

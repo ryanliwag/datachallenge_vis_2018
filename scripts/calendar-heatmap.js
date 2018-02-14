@@ -50,7 +50,7 @@ function drawCalendar(dateData){
 
     var tables = d3.select("#chart1").append("svg")
       .attr("width","70%")
-      .attr("viewBox","0 0 "+(xOffset+width)+" 700")
+      .attr("viewBox","0 0 "+(xOffset+width)+" 500")
 
 
   var day = d3.timeFormat("%w"),

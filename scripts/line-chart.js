@@ -52,7 +52,7 @@ d3.csv("data/mrt_data_new_2.csv", type, function(error, data) {
 
 
   g.append("line")
-      .style("stroke", "rgb(153, 161, 226)")
+      .style("stroke", "red")
       .attr("x1", 0)     // x position of the first end of the line
       .attr("y1", y(350000))      // y position of the first end of the line
       .attr("x2", width-20)     // x position of the second end of the line
@@ -62,7 +62,7 @@ d3.csv("data/mrt_data_new_2.csv", type, function(error, data) {
       .attr("x", 500)     // x position of the first end of the line
       .attr("y", y(350000) -5)      // y position of the first end of the line
       .text("MRT Capacity 350,000")
-      .style("fill", "rgb(153, 161, 226)")
+      .style("fill", "black")
 
   var city = g.selectAll(".city")
     .data(cities)
@@ -72,7 +72,7 @@ d3.csv("data/mrt_data_new_2.csv", type, function(error, data) {
   city.append("path")
       .attr("class", "line")
       .attr("d", function(d) { return line(d.values); })
-      .style("stroke", "rgb(153, 161, 226)");
+      .style("stroke", "rgb(246, 164, 61)");
 
 });
 

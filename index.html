@@ -11,10 +11,7 @@
     <script type="text/javascript" src="bower_components/d3-plugins/jsonp/jsonp.js"></script>
     <script type="text/javascript" src="bower_components/momentjs/min/moment.min.js"></script>
     <link type="text/css" rel="stylesheet" href="main.css"/>
-
-
   </head>
-
 
   <body>
 
@@ -22,8 +19,8 @@
 
     <script src="bower_components/d3/d3.min.js"></script>
     <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
-        <script src="scripts/calendar-heatmap.js"></script>
-        <script src="scripts/time_slider.js"></script>
+    <script src="scripts/calendar-heatmap.js"></script>
+    <script src="scripts/time_slider.js"></script>
 
 
     <div class="flex-container">
@@ -35,21 +32,36 @@
 
     <article class="article">
 
+      <br />
+      <br />
 
-      <h1>MRT Daily Foot Traffic For 2017</h1>
+      <p>Its a well known fact that the mrt3 has not been in a good position since 2015.<br />
+         It has consistently exceded the allowable capacity throughout the year. The goverment needs <br />
+         to atleast manage a capacity of 400,000 to 500,000 people daily. The interactive visualizations <br />
+         below show's the state of the MRT and its daily operations. Mrt issues also seems to appear so <br />
+         frequently throughout the past year, showing a possible lack of maintenance going through the MRT. <br />
+      </p>
 
-      <p>Note: This calendar heatmap shows total daily Mrt Foot Traffic.
-      Hovering over the elements will give a tool tip display of basic information.</p>
-      <p> Clicking on the elements will give each station's entry and exit information through two barcharts.
-          Holiday and Mrt Issues elements can be toggled to highlight instances throughout the year.</p>
+      <h2>Average daily traffic of MRT throughout 2017</h2>
+      <svg width="960" height="500"></svg>
+      <script src="scripts/line-chart.js"></script>
+
+      <h2>MRT Daily Foot Traffic For 2017</h2>
+
+      <p>Note: This calendar heatmap shows total daily Mrt Foot Traffic. <br />
+        Hovering over the elements will give a tool tip display of basic information. <br />
+        Clicking on the calendar elements will give each station's entry and exit information through two barcharts. <br />
+        Clicking on the Holiday and Mrt Issues elements can be toggled to highlight instances throughout the year. </p>
 
       <div id="chart1"></div>
 
+      <br />
+      <br />
 
       <h1>Average Hourly Foot Traffic Per Station</h1>
 
-      <p>Note: This hourly data is from 5am to 11pm taken from month of september 2017. Entries and exit on each station can be observed
-      simply by adjusting the slider.</p>
+      <p>Note: This hourly data is from 5am to 11pm taken from month of september 2017. <br />
+         Entries and exit on each station can be observed simply by adjusting the slider.</p>
 
       <form>
           <label for="Hour">Select a Time: </label>
@@ -59,9 +71,18 @@
 
       <div id="vis"></div>
 
+      <br />
+      <br />
+      <p>All D3 code is done by myself, here is post on my <a href="https://ryanliwag.github.io/Visualizing-MRT-2017/">website</a> discussing my journey through building these visualizations. <br />
+         All data is given by efoi philippines, additional data such as mrt problems and weather is scraped by myself from MRT website and Pagasa. <br />
+         Other References: <a href="http://www.gmanetwork.com/news/scitech/science/490510/on-the-mrt-a-capacity-conundrum/story/"> MRT Conundrum </a> and <a href="and http://mrt3.com/ "> mrt3 </a>
+      </p>
+
     </article>
 
-    <footer>tstststs</footer>
+
+
+    <footer>mrt3 visualizaton</footer>
     </div>
   </body>
 </html>
